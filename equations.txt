@@ -1,0 +1,95 @@
+# Physics-Informed Neural Network (PINN) for Thermal Ascents and Deep Convection
+# Complete Equations and Variable Definitions
+
+=============================================================================
+1. MOMENTUM EQUATION (Boussinesq Approximation)
+=============================================================================
+∂w/∂t + u·∇w = - (1/ρ₀) ∂p'/∂z + g (θ_v'/θ₀) + νₜ ∇²w
+
+Variables:
+- w          : Vertical velocity (m/s)
+- u          : 3D velocity vector (u, v, w) (m/s)
+- ρ₀         : Reference air density (kg/m³)
+- p'         : Pressure perturbation (Pa)
+- g          : Gravitational acceleration (9.81 m/s²)
+- θ_v'       : Virtual potential temperature anomaly (θ_v' = θ' + 0.61θ₀ q_v' - qₗ) (K)
+- θ₀         : Reference potential temperature (K)
+- νₜ         : Turbulent viscosity (m²/s)
+
+=============================================================================
+2. HEAT TRANSPORT EQUATION (With Latent Heating)
+=============================================================================
+∂θ/∂t + u·∇θ = κₜ ∇²θ + (L_v/c_p Π) C
+
+Variables:
+- θ          : Potential temperature (K)
+- κₜ         : Thermal diffusivity (m²/s)
+- L_v        : Latent heat of vaporization (2.5×10⁶ J/kg)
+- c_p        : Specific heat at constant pressure (1005 J/kg/K)
+- Π          : Exner function (Π = (p/p₀)^(R_d/c_p), dimensionless)
+- C          : Condensation rate (C = max(0, q_v - q_sat)) (kg/kg/s)
+
+=============================================================================
+3. MOISTURE CONSERVATION EQUATION
+=============================================================================
+∂q_v/∂t + u·∇q_v = -C + E
+
+Variables:
+- q_v        : Water vapor mixing ratio (kg/kg)
+- E          : Evaporation rate (kg/kg/s)
+
+=============================================================================
+4. MASS-FLUX PARAMETERIZATION (Convective Plumes)
+=============================================================================
+∂M_u/∂z = ε M_u - δ M_u
+
+Variables:
+- M_u        : Updraft mass flux (kg/m²/s)
+- ε          : Entrainment rate (m⁻¹)
+- δ          : Detrainment rate (m⁻¹)
+
+=============================================================================
+5. SATURATION HUMIDITY (q_sat)
+=============================================================================
+q_sat = 0.622 e_sat(T) / (p - 0.378 e_sat(T))
+
+With Tetens formula for e_sat(T):
+e_sat(T) = 611 exp(17.27(T - 273.15)/(T - 35.86)) (Pa)
+
+Variables:
+- T          : Temperature (K)
+- p          : Pressure (Pa)
+
+=============================================================================
+6. CONTINUITY EQUATION (Anelastic Approximation)
+=============================================================================
+∇·(ρ₀ u) = 0
+
+=============================================================================
+7. TURBULENCE CLOSURE (TKE Equation)
+=============================================================================
+∂e/∂t + u·∇e = 𝒫 + ℬ - ε
+
+Variables:
+- e          : Turbulent kinetic energy (m²/s²)
+- 𝒫          : Shear production (𝒫 = νₜ (∂u_i/∂x_j + ∂u_j/∂x_i)²) (m²/s³)
+- ℬ          : Buoyancy production (ℬ = (g/θ₀) w'θ_v') (m²/s³)
+- ε          : Dissipation rate (ε = C_ε e^(3/2)/ℓ) (m²/s³)
+- ℓ          : Turbulence length scale (m)
+
+=============================================================================
+8. CLOUD WATER TRANSPORT
+=============================================================================
+∂qₗ/∂t + u·∇qₗ = C - P_auto - P_acc
+
+Variables:
+- qₗ         : Cloud liquid water mixing ratio (kg/kg)
+- P_auto     : Autoconversion rate (kg/kg/s)
+- P_acc      : Accretion rate (kg/kg/s)
+
+=============================================================================
+# CONSTANTS
+=============================================================================
+- R_d        : Gas constant for dry air (287 J/kg/K)
+- C_ε        : TKE dissipation constant (~0.09)
+- C_k        : Turbulent viscosity constant (~0.1)
